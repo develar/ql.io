@@ -1,0 +1,22 @@
+{
+    "author": "ql.io",
+    "name": "ql.io-context-config",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ql-io/ql.io"
+    },
+    "engines": {
+        "node":"> 0.8.0"
+    },
+    "main": "index.js",
+    "dependencies": {
+        "underscore": "1.3.3",
+        "q": "0.9.0",
+        "bit-array": "0.2.2"
+    },
+    "devDependencies": {
+        "cluster": "",
+        "nodeunit": "0.7.4"
+    }
+}
