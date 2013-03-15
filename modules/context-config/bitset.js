@@ -1,11 +1,13 @@
-
-var assert = require("assert");
+var assert = require("assert"),
+    _ = require("underscore");
+    
+//constructor
 var BitSet = module.exports = function() {
     this._words = [];
 };
 
-var BITS_OF_A_WORD = 32;
-var SHIFTS_OF_A_WORD = 5;
+var BITS_OF_A_WORD = 32,
+    SHIFTS_OF_A_WORD = 5;
 
 /**
  *
@@ -28,13 +30,13 @@ var mask = function(pos){
 BitSet.prototype.set = function(pos) {
 
     assert.ok(pos >= 0, "position must be non-negative");
-    return this._words[whichWord(pos)] |= mask(pos);
+    return this._words[whichWord(pos)] = (this._words[whichWord(pos)] || 0) | mask(pos);
 };
 
 BitSet.prototype.clear = function(pos) {
 
     assert.ok(pos >= 0, "position must be non-negative");
-    return this._words[whichWord(pos)] &= ~mask(pos);
+    return this._words[whichWord(pos)] = (this._words[whichWord(pos)] || 0) & ~mask(pos);
 };
 
 BitSet.prototype.get = function(pos) {
@@ -56,7 +58,7 @@ BitSet.prototype.words = function() {
 BitSet.prototype.cardinality = function() {
     var next, sum = 0, maxWords = this.words();
     for(next = 0; next < maxWords; next += 1){
-        var nextWord = this._words[next];
+        var nextWord = this._words[next] || 0;
         if(nextWord !== 0){
             //this loops only the number of set bits, not 32 constant all the time!
             for(var bits = nextWord; bits !== 0; bits &= (bits - 1)){
@@ -74,7 +76,7 @@ BitSet.prototype.or = function(set) {
 
     var next, commons = Math.min(this.words(), set.words());
     for (next = 0; next < commons; next += 1) {
-        this._words[next] |= set._words[next];
+        this._words[next] = (this._words[next] || 0) | (set._words[next] || 0);
     }
     if (commons < set.words()) {
         this._words = this._words.concat(set._words.slice(commons, set.words()));
@@ -99,7 +101,7 @@ BitSet.prototype.and = function(set) {
         words = this._words;
 
     for (next = 0; next < commons; next += 1) {
-        words[next] &= set._words[next];
+        words[next] = (words[next] || 0) & (set._words[next] || 0);
     }
     if(commons > set.words()){
         _.each(_.range(commons, set.words()), function(elem){
@@ -112,19 +114,19 @@ BitSet.prototype.and = function(set) {
 BitSet.prototype.xor = function(set) {
     var next, commons = Math.min(this.words(), set.words());
     for (next = 0; next < commons; next += 1) {
-        this._words[next] ^= set._words[next];
+        this._words[next] = (this._words[next] || 0) ^  (set._words[next] || 0);
     }
 
     if(commons < set.words()){
         var maxWords = set.words();
         for(next = commons; next < maxWords; next += 1){
-            this._words[next] = set._words[next] ^ 0;
+            this._words[next] = (set._words[next] || 0) ^ 0;
         }
     }
     else{
         var maxWords = this.words();
         for(next = commons; next < maxWords; next += 1){
-            this._words[next] ^= 0;
+            this._words[next] = (this._words[next] || 0) ^ 0;
         }
     }
     return this;
@@ -140,7 +142,7 @@ BitSet.prototype.xor = function(set) {
 BitSet.prototype.nextSetBit = function(pos){
     //the very first word
     var next = whichWord(pos),
-        firstWord = this._words[next],
+        firstWord = this._words[next] || 0,
         maxWords = this.words();
     if(firstWord !== 0){
         for(var bit = pos & 31; bit < BITS_OF_A_WORD; bit += 1){
@@ -150,7 +152,7 @@ BitSet.prototype.nextSetBit = function(pos){
         }
     }
     for(next = next + 1; next < maxWords; next += 1){
-        var nextWord = this._words[next];
+        var nextWord = this._words[next] || 0;
         if(nextWord !== 0){
             for(var bit = 0; bit < BITS_OF_A_WORD; bit += 1){
                 if((nextWord & mask(bit)) !== 0){
