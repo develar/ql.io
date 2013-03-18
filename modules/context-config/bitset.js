@@ -30,19 +30,28 @@ var mask = function(pos){
 BitSet.prototype.set = function(pos) {
 
     assert.ok(pos >= 0, "position must be non-negative");
-    return this._words[whichWord(pos)] = (this._words[whichWord(pos)] || 0) | mask(pos);
+
+    var which = whichWord(pos),
+        words = this._words;
+    return words[which] = words[which] | mask(pos);
 };
 
 BitSet.prototype.clear = function(pos) {
 
     assert.ok(pos >= 0, "position must be non-negative");
-    return this._words[whichWord(pos)] = (this._words[whichWord(pos)] || 0) & ~mask(pos);
+
+    var which = whichWord(pos),
+        words = this._words;
+    return words[which] = words[which] & ~mask(pos);
 };
 
 BitSet.prototype.get = function(pos) {
 
     assert.ok(pos >= 0, "position must be non-negative");
-    return (this._words[whichWord(pos)] & mask(pos)) !== 0;
+
+    var which = whichWord(pos),
+        words = this._words;
+    return words[which] & mask(pos);
 };
 
 BitSet.prototype.words = function() {
@@ -142,21 +151,23 @@ BitSet.prototype.xor = function(set) {
 BitSet.prototype.nextSetBit = function(pos){
     //the very first word
     var next = whichWord(pos),
-        firstWord = this._words[next] || 0,
-        maxWords = this.words();
-    if(firstWord !== 0){
-        for(var bit = pos & 31; bit < BITS_OF_A_WORD; bit += 1){
-            if((firstWord & mask(bit)) !== 0){
-                return pos + bit;
+        words = this._words,
+        firstWord = words[next] || 0,
+        maxWords = this.words(),
+        bit;
+    if(firstWord){
+        for(bit = pos & 31; bit < BITS_OF_A_WORD; bit += 1){
+            if((firstWord & mask(bit))){
+                return (next << SHIFTS_OF_A_WORD) + bit;
             }
         }
     }
     for(next = next + 1; next < maxWords; next += 1){
-        var nextWord = this._words[next] || 0;
-        if(nextWord !== 0){
-            for(var bit = 0; bit < BITS_OF_A_WORD; bit += 1){
+        var nextWord = words[next] || 0;
+        if(nextWord){
+            for(bit = 0; bit < BITS_OF_A_WORD; bit += 1){
                 if((nextWord & mask(bit)) !== 0){
-                    return next << SHIFTS_OF_A_WORD + bit;
+                    return (next << SHIFTS_OF_A_WORD) + bit;
                 }
             }
             //shouldn't ever come here
