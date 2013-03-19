@@ -52,21 +52,21 @@ module.exports = {
                 worker.send({
                     "type":"config-read",
                     "properties":[{
-                        "key":"k1",
-                        "context": {"site":"en-US"},
-                        "value":"v1"
-                    }
+                            "key":"k1",
+                            "context": {"site":"en-US"},
+                            "value":"v3"
+                        }
                         ,{
                             "key":"k1",
                             "context": {"site":"de-DE"},
-                            "value":"v2"
+                            "value":"v4"
                         }],
                     "validContexts":["site"]
                 });
             });
 
             var timeOut = setTimeout(function(){
-                worker.kill('SIGTERM');
+                worker.process.kill('SIGTERM');
             }, 5000);
 
             cluster.on('exit', function(worker, code, signal) {
@@ -78,8 +78,9 @@ module.exports = {
             var builder = new Builder("", {});
             builder.build(function(config){
                 test.ok(config, "config cannot be null!");
-                test.equals(config.get("k1"), "v1");
+                test.equals(config.get("k1"), "v3");
                 console.log(config.get("k1"));
+                test.done();
 
             }, function(error){
                 test.fail(error);
