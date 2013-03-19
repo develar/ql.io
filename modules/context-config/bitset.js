@@ -123,7 +123,7 @@ BitSet.prototype.and = function(set) {
 BitSet.prototype.xor = function(set) {
     var next, commons = Math.min(this.words(), set.words());
     for (next = 0; next < commons; next += 1) {
-        this._words[next] = (this._words[next] || 0) ^  (set._words[next] || 0);
+        this._words[next] = (this._words[next] || 0) ^ (set._words[next] || 0);
     }
 
     if(commons < set.words()){
@@ -152,7 +152,7 @@ BitSet.prototype.nextSetBit = function(pos){
     //the very first word
     var next = whichWord(pos),
         words = this._words,
-        firstWord = words[next] || 0,
+        firstWord = words[next],
         maxWords = this.words(),
         bit;
     if(firstWord){
@@ -163,7 +163,7 @@ BitSet.prototype.nextSetBit = function(pos){
         }
     }
     for(next = next + 1; next < maxWords; next += 1){
-        var nextWord = words[next] || 0;
+        var nextWord = words[next];
         if(nextWord){
             for(bit = 0; bit < BITS_OF_A_WORD; bit += 1){
                 if((nextWord & mask(bit)) !== 0){
