@@ -3,6 +3,8 @@
  *
  * @type {*}
  */
+var _ = require("underscore"),
+    assert = require("assert");
 
 var loadConfig = function(root, message, self){
     var domain = root[message.domain];
@@ -11,11 +13,14 @@ var loadConfig = function(root, message, self){
     var config = project[message.config];
     var version = config[message.version];
 
-    self.emit({
+    var response = {};
+    _.extend(response, message);
+    _.extend(response, {
         type:"config-read",
         message:message,
         properties:version
     });
+    self._emitter.emit("config-read", response);
 };
 
 //constructor
@@ -25,20 +30,11 @@ var NodeConfig = module.exports = function(dir, emitter){
     //for persistence/coldcache purpose.
     self._dir = dir;
 
-    if(emitter){
-        self._emitter = emitter;
-        self._emitter.on("read-config", function(message){
-            self.load(message);
-        });
-        self.emit = function(message){
-            self._emitter.emit("config-read", message);
-        }
-    }
-    else{
-        self.emit = function(message){
-            process.send(message);
-        }
-    }
+    assert.ok(emitter, "emitter must be provided");
+    self._emitter = emitter;
+    self._emitter.on("read-config", function(message){
+        self.load(message);
+    });
 
     process.env["NODE_CONFIG_DIR"] = dir;
     self._config = require("config");

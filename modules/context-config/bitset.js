@@ -3,6 +3,10 @@ var assert = require("assert"),
     
 //constructor
 var BitSet = module.exports = function() {
+
+    //_words property is an array of 32bits integers, javascript doesn't really have integers separated from Number type
+    //it's less performant because of that, number (by default float) would be internally converted to 32bits integer then accepts the bit operations
+    //checked Buffer type, but needs to handle expansion/downsize by application, compromised to use number array for now.
     this._words = [];
 };
 
@@ -15,13 +19,14 @@ var BITS_OF_A_WORD = 32,
  * @return {Number} the index at the words array
  */
 var whichWord = function(pos){
+    //assumed pos is non-negative, guarded by #set, #clear, #get etc.
     return pos >> SHIFTS_OF_A_WORD;
 };
 
 /**
  *
  * @param pos
- * @return {Number} a bit mask of 32 bits, 1 bit at pos % 32 set as 1, the rest being 0
+ * @return {Number} a bit mask of 32 bits, 1 bit set at pos % 32, the rest being 0
  */
 var mask = function(pos){
     return 1 << (pos & 31);
