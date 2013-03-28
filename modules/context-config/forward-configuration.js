@@ -19,11 +19,11 @@ var ForwardConfiguration = module.exports = function(forwards){
  */
 ForwardConfiguration.prototype.get = function(key, contextsIterator, onMiss){
 
-    _.reduce(this._forwards, function(memoize, forward){
+    var found = _.reduce(this._forwards, function(memoize, forward){
         return memoize || forward.get(key, contextsIterator);
     }, null);
 
-    return onMiss;
+    return found || onMiss;
 }
 
 /**

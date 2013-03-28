@@ -25,7 +25,7 @@ module.exports = {
             });
         });
 
-        var builder = new Builder("", {
+        var builder = new Builder({
 
         }, emitter);
 
@@ -75,7 +75,7 @@ module.exports = {
         }
         else{
 
-            var builder = new Builder("", {});
+            var builder = new Builder({});
             builder.build(function(config){
                 test.ok(config, "config cannot be null!");
                 test.equals(config.get("k1"), "v3");
