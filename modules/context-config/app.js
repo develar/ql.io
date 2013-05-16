@@ -1,8 +1,8 @@
 
 var _ = require("underscore"),
     Q = require('q'),
-    ContextConfiguration = require('./context-configuration.js'),
-    ForwardConfiguration = require('./forward-configuration.js');
+    ContextConfiguration = require('./context-configuration.js').ContextConfiguration,
+    ForwardConfiguration = require('./forward-configuration.js').ForwardConfiguration;
 
 var ConfigurationBuilder = module.exports = function(ref, emitter){
 
@@ -19,6 +19,7 @@ var ConfigurationBuilder = module.exports = function(ref, emitter){
             process.send({//worker sending over to master
                 "type":event,
                 "pid":process.pid,
+                "base":ref.base,
                 "domain":ref.domain,
                 "target":ref.target,
                 "project":ref.project,
@@ -36,8 +37,8 @@ ConfigurationBuilder.prototype.build = function(callback, onError){
     var ref = self._ref;
     var deferred = Q.defer();
     var timeOut = setTimeout(function(){
-        deferred.reject("timeout after 3s");//timeout
-    }, 3000);//TIME OUT IN 3 SECONDS
+        deferred.reject("timeout after 10s");//timeout
+    }, 10000);//TIME OUT IN 3 SECONDS
 
     if(self._forward){
         clearTimeout(timeOut);
@@ -61,6 +62,7 @@ ConfigurationBuilder.prototype.build = function(callback, onError){
         emitter.emit("read-config", {
             "type":"read-config",
             "pid":process.pid,
+            "base":ref.base,
             "domain":ref.domain,
             "target":ref.target,
             "project":ref.project,
