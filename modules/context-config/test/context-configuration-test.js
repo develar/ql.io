@@ -1,4 +1,4 @@
-var ContextConfiguration = require("../context-configuration.js");
+var ContextConfiguration = require("../context-configuration.js").ContextConfiguration;
 
 module.exports = {
 

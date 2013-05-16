@@ -2,7 +2,7 @@ var assert = require("assert"),
     _ = require("underscore");
     
 //constructor
-var BitSet = module.exports = function() {
+var BitSet = exports.BitSet = function() {
 
     //_words property is an array of 32bits integers, javascript doesn't really have integers separated from Number type
     //it's less performant because of that, number (by default float) would be internally converted to 32bits integer then accepts the bit operations
@@ -70,14 +70,12 @@ BitSet.prototype.words = function() {
  * this is much faster than BitSet lib of CoffeeScript, it fast skips 0 value words
  */
 BitSet.prototype.cardinality = function() {
-    var next, sum = 0, maxWords = this.words();
+    var next, sum = 0, arrOfWords = this._words, maxWords = this.words();
     for(next = 0; next < maxWords; next += 1){
-        var nextWord = this._words[next] || 0;
-        if(nextWord !== 0){
-            //this loops only the number of set bits, not 32 constant all the time!
-            for(var bits = nextWord; bits !== 0; bits &= (bits - 1)){
-                sum += 1;
-            }
+        var nextWord = arrOfWords[next] || 0;
+        //this loops only the number of set bits, not 32 constant all the time!
+        for(var bits = nextWord; bits !== 0; bits &= (bits - 1)){
+            sum += 1;
         }
     }
     return sum;

@@ -6,7 +6,7 @@ var _ = require("underscore");
  * it allows runtime hotswaps of this._forwards to reflect the remote/file changes detected
  * @type {Function}
  */
-var ForwardConfiguration = module.exports = function(forwards){
+var ForwardConfiguration = exports.ForwardConfiguration = function(forwards){
 
     this._forwards = _.compact(forwards);
 };

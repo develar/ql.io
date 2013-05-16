@@ -1,4 +1,4 @@
-var BitSet = require("../bitset.js"),
+var BitSet = require("../bitset.js").BitSet,
     _ = require("underscore");
 
 module.exports = {

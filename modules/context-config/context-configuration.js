@@ -1,8 +1,8 @@
 var _ = require("underscore"),
     assert = require("assert"),
-    BitSet = require("./bitset.js");
+    BitSet = require("./bitset.js").BitSet;
 
-var ContextConfiguration = module.exports = function(properties, contexts){
+var ContextConfiguration = exports.ContextConfiguration = function(properties, contexts){
     var self = this;
     //a configuration is essentially a list(array) of rows, each row is a map of contexts, each context maps context value to the row key
     self._properties = []; //[{'_key_':'k', 'context':{'site':'en-US'}, 'value':'v']
